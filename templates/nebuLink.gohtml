@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NebuLink by GalacticApps</title>
+    <meta name="theme-color" content="#0b1221">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="/static/nebulink/manifest.json">
+    <link rel="apple-touch-icon" href="/static/nebulink/assets/logo.png">
+    <link rel="icon" href="/static/nebulink/assets/logo.png" type="image/png">
+    <link rel="stylesheet" type="text/css" href="../static/nebulink/nebulink.css">
+    <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+    <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined"
+    />
+    <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+    />
+    <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css?family=Material+Symbols+Rounded"
+    />
+
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://cdn.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
+    <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+    <script src="https://cdn.babylonjs.com/gui/babylon.gui.min.js"></script>
+    <script src="https://cdn.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+    <script src="/static/nebulink/classes.js" type="module"></script>
+</head>
+<body>
+<div class="container oui-styled-scrollbars">
+    <aside class="sidebar menu collapsed">
+        <button id="toggleSidebar">☰</button>
+        <nav>
+            <details id="tag-container" class="sidebar-container">
+                <summary><span class="material-symbols-outlined">person_heart</span> <span class="summary-label">Following</span>
+                </summary>
+                <div class="followers-section">
+                    <div id="followers-list">
+                        <!-- Account cards will be dynamically inserted here -->
+                    </div>
+                </div>
+            </details>
+            <details id="account-container">
+                <summary><span class="sidebar-container"><span class="material-icons-outlined">account_box</span> <span
+                                class="summary-label">Accounts</span></span></summary>
+                <div class="accounts-section">
+                    <div id="accounts-list" class="accounts-list">
+                        <!-- Account cards will be dynamically inserted here -->
+                    </div>
+                    <button id="add-account-btn" class="add-account-btn">
+                        <span class="material-icons-outlined">add_circle</span>
+                        <span>Add Account</span>
+                    </button>
+                </div>
+            </details>
+            <details id="hashtag-container" class="sidebar-container">
+                <summary><span class="material-icons-outlined">numbers</span> <span
+                            class="summary-label">Hashtags</span>
+                </summary>
+                <div class="hashtag-section">
+                    <div id="hashtag-list">
+                        <!-- Account cards will be dynamically inserted here -->
+                    </div>
+                </div>
+            </details>
+            <template id="account-card-template">
+                <div class="account-card">
+                    <div class="account-card-content">
+                        <img class="account-avatar" src="" alt="avatar">
+                        <div class="account-info">
+                            <div class="account-name"></div>
+                            <div class="account-handle"></div>
+                            <div class="account-instance"></div>
+                        </div>
+                    </div>
+                    <div class="account-actions">
+                        <span class="account-active-badge">Active</span>
+                        <button class="account-logout-btn" title="Log out">
+                            <span class="material-icons-outlined">logout</span>
+                        </button>
+                    </div>
+                </div>
+            </template>
+        </nav>
+    </aside>
+    <main class="content">
+        <div id="titleBarContainer">
+            NebuLink by GalacticApps
+            <span class="material-symbols-outlined" id="settings-button">
+settings
+</span>
+        </div>
+        <div id="feed-controls-container">
+            <div class="feed-top">
+                <button id="home-feed" class="feed-top-btn active" title="Open home feed"
+                        aria-label="Open home feed">
+                    <span class="material-symbols-outlined">for_you</span>
+                    <span>Home</span>
+                </button>
+                <button id="recommended-feed" class="hidden feed-top-btn" title="Open recommended feed"
+                        aria-label="Open recommended feed">
+                    <span class="material-symbols-outlined">recommend</span>
+                    <span>Recommended</span>
+                </button>
+                <button id="popular-feed" class="feed-top-btn" title="Open popular feed"
+                        aria-label="Open popular feed">
+                    <span class="material-symbols-outlined">local_fire_department</span>
+                    <span>Popular</span>
+                </button>
+                <button id="refresh-feed" class="feed-top-btn" title="Refresh feed"
+                        aria-label="Refresh feed">
+                    <span class="material-icons-outlined">autorenew</span>
+                    <span>Refresh</span>
+                </button>
+                <button id="analyze-feed" class="hidden feed-top-btn" title="Open feed sentiment"
+                        aria-label="Open feed sentiment">
+                    <span class="material-symbols-outlined">monitoring</span>
+                    <span>Sentiment</span>
+                </button>
+                <button id="search-feed" class="feed-top-btn hidden" title="Open search"
+                        aria-label="Open search">
+                    <span class="material-symbols-outlined">search</span>
+                    <span id="search-feed-span">Search</span>
+                </button>
+                <button id="enterVRButton" class="hidden feed-top-btn" title="Enter XR mode"
+                        aria-label="Enter XR mode">
+                    <span class="material-symbols-outlined">
+                    head_mounted_device
+                    </span>
+                    <span>XR</span>
+                </button>
+            </div>
+        </div>
+        <div id="feed-container">
+            <section id="feed-section">
+                <div id="feed-items">
+                </div>
+            </section>
+            <section id="toot-section" class="hidden">
+            </section>
+        </div>
+        <template id="feed-template">
+            <article>
+                <div class="masto-status">
+                    <div class="status-body">
+                        <div class="status-header">
+                            <img class="status-avatar" alt="avatar" src="">
+                            <div style="width: calc(100% - 42px);">
+                                <div class="status-author-info">
+                                    <span class="status-display_name"></span>
+                                    <span class="status-acct"></span>
+                                </div>
+                                <div class="status-date-info">
+                                    <div>
+                                        <time class="status-date"></time>
+                                    </div>
+                                    <div class="status-footer">
+                                        <button class="status-translate-button status-button" title="Translate post"
+                                                aria-label="Translate post">
+                                            <span class="material-symbols-outlined">translate</span>
+                                        </button>
+                                        <button class="status-like-button status-button" aria-label="Like post">
+                                            <span class="material-icons-outlined">favorite</span>
+                                        </button>
+                                        <span class="status-like-count">0</span>
+                                        <button class="status-comments-meta status-button">
+                                            <span class="material-icons-outlined">mode_comment</span>
+                                        </button>
+                                        <span class="status-comments-count">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="status-content"></div>
+
+                    </div>
+                </div>
+            </article>
+        </template>
+        <template id="article-template">
+            <div class="content-container">
+                <div class="article-card">
+                    <span class="material-symbols-outlined article-close-button" title="close the opened toot"
+                          aria-label="Close article">close</span>
+                    <img class="article-avatar" src="" alt="author avatar">
+                    <p class="article-author"></p>
+                    <img class="article-image" src="" alt="main image of post">
+                    <video role="application" playsinline loop controls class="article-video">Attached video cannot be
+                        played/found...
+                    </video>
+                    <p class="article-date"></p>
+                    <p class="article-content"></p>
+                    <div class="article-actions">
+                        <button class="article-button" id="translate" title="Translate post"
+                                aria-label="Translate post">
+                            <span class="material-symbols-outlined">translate</span>
+                        </button>
+                        <button class="article-button" id="like" title="like this post" aria-label="Like post"><span
+                                    class="material-icons-outlined">favorite</span></button>
+                        <button class="article-button" id="summarize" title="Summarize this Post"><span
+                                    class="material-symbols-outlined">
+                                    unfold_less
+                                    </span></button>
+                        <button class="article-button" id="summarize-comments" title="Summarize the Comments"><span
+                                    class="material-symbols-outlined">
+                                unfold_less_double
+                                </span></button>
+                    </div>
+
+                </div>
+                <section id="comments-section">
+                    <h3 id="reply-header">Replies:</h3>
+                </section>
+            </div>
+        </template>
+        <template id="comment-template">
+            <div class="comment-card">
+                <img class="comment-avatar" alt="commenter avatar">
+                <div class="comment-body">
+                    <div class="comment-header">
+                        <span class="comment-author"></span>
+                    </div>
+                    <div class="comment-content"></div>
+                    <div class="comment-footer">
+                        <time class="comment-timestamp"></time>
+                        <div class="comment-actions">
+                            <span class="material-icons-outlined" title="like" aria-hidden="true">favorite_border</span>
+                        </div>
+                    </div>
+                </div>
+                <img class="comment-media" alt="comment media"/>
+            </div>
+        </template>
+    </main>
+    <footer id="footer" class="menu">
+        <nav>
+            <ul id="nav-footer-items">
+                <li><span class="material-symbols-outlined" id="nav-footer-followers" title="Followers"
+                          aria-label="Followers">person_heart</span>
+                    <div id="nav-followers-section" popover>
+                        <div id="followers-list-footer">
+                            <!-- Followers will be dynamically inserted here -->
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <span class="material-icons-outlined" id="nav-footer-acct" title="Accounts" aria-label="Accounts">account_box</span>
+                    <div id="nav-accounts-section" popover>
+                        <div id="accounts-list-footer" class="accounts-list">
+                            <!-- Account cards will be dynamically inserted here -->
+                        </div>
+                        <button id="add-account-btn-footer" class="add-account-btn">
+                            <span class="material-icons-outlined">add_circle</span>
+                            <span>Add Account</span>
+                        </button>
+                    </div>
+                </li>
+                <li><span class="material-symbols-outlined" id="nav-footer-hashtags" title="Hashtags"
+                          aria-label="Hashtags">numbers</span>
+                    <div id="nav-hashtags-section" popover>
+                        <div id="hashtags-list-footer">
+                            <!-- Followers will be dynamically inserted here -->
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <template id="account-card-template">
+                <div class="account-card">
+                    <div class="account-card-content">
+                        <img class="account-avatar" src="" alt="avatar">
+                        <div class="account-info">
+                            <div class="account-name"></div>
+                            <div class="account-handle"></div>
+                            <div class="account-instance"></div>
+                        </div>
+                    </div>
+                    <div class="account-actions">
+                        <span class="account-active-badge">Active</span>
+                        <button class="account-logout-btn" title="Log out">
+                            <span class="material-icons-outlined">logout</span>
+                        </button>
+                    </div>
+                </div>
+            </template>
+        </nav>
+    </footer>
+    <template id="feed-list-template">
+        <a class="feed-list-item">
+            <img class="feed-list-item-logo">
+            <span class="feed-list-item-name"></span>
+            <span class="feed-list-item-unread"></span>
+        </a>
+    </template>
+
+    <dialog id="loading-dialog">
+        <label for="analysis-progress">AI Analysis Progress:</label>
+        <progress id="analysis-progress" max="100" value="0">0%</progress>
+    </dialog>
+    <dialog id="hashtag-search-results">
+        <div id="hashtag-search-header">
+            <label>Hashtag Search Results</label>
+            <button id="hashtag-search-close-button"
+                    title="close your search result window"
+                    aria-label="Close the Search Results">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div id="hashtag-search-container">
+
+        </div>
+    </dialog>
+    <dialog id="settings-dialog">
+        <button id="get-ai" class="hidden">Download AI Models</button>
+        <button id="check-cache">Check Storage</button>
+        <button id="check-features">List Features</button>
+        {{/*        <button id="debug-sentiment">Debug Sentiment</button>*/}}
+        <div class="ai-toggle-row">
+            <label for="ai-toggle" class="ai-toggle-label">AI Features</label>
+            <label class="switch">
+                <input type="checkbox" id="ai-toggle" aria-label="Enable AI Features">
+                <span class="slider round"></span>
+            </label>
+        </div>
+        <select id="ai-models">
+            <option value="web">Browser Models</option>
+            <option value="wllama">Third-Party Models</option>
+            {{/*            <option value="local">Local Models</option>*/}}
+        </select>
+
+        <select id="ai-size" disabled>
+            <option value="small">Small</option>
+            <option value="default">Default</option>
+            <option value="large">Large</option>
+        </select>
+        <div id="nsfw-toggle-row">
+            <label for="nsfw-toggle" class="nsfw-toggle-label">Show NSFW</label>
+            <label class="switch">
+                <input type="checkbox" id="nsfw-toggle" aria-label="Show NSFW Content">
+                <span class="slider round"></span>
+            </label>
+        </div>
+        <br>
+        <button id="clear-cache">Clear AI Models</button>
+    </dialog>
+
+    <dialog id="account-dialog">
+        <h2>Login to Mastodon</h2>
+        <form id="account-form">
+            <label for="instance">Instance URL</label>
+            <input type="text" id="instance" placeholder="e.g. mastodon.social" required>
+            <div class="dialog-buttons">
+                <button type="submit" id="add_account">Log In</button>
+                <button type="button" id="cancel-account-dialog">Cancel</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="topics-dialog">
+        <h2>Choose your favorite topics</h2>
+        <p>Enter up to 20 topics you enjoy (comma-separated). We'll use these to personalize your recommended feed.</p>
+        <textarea id="topics-input" rows="4" style="width:100%;"
+                  placeholder="e.g. dogs, coffee, javascript, music"></textarea>
+        <div class="dialog-buttons">
+            <button id="save-topics" type="button">Save Topics</button>
+            <button id="skip-topics" type="button">Skip</button>
+        </div>
+    </dialog>
+
+    <dialog id="ai-results">
+                    <span class="material-symbols-outlined" id="ai-result-close-button"
+                          title="close your results window"
+                          aria-label="Close the AI Results">close</span>
+    </dialog>
+
+    <template id="summary-template">
+        <h2>Summary</h2>
+        <p id="summary-result"></p>
+    </template>
+    <!-- Sentiment results template -->
+    <template id="sentiment-template">
+        <div class="sentiment-results">
+            <h2>Sentiment Analysis — <span class="sentiment-topic"></span></h2>
+            <div class="sentiment-explanation">Explanation: <strong class="sentiment-explanation-value"></strong></div>
+
+            <div class="sentiment-consensus">Consensus: <strong class="sentiment-consensus-value"></strong> <span
+                        class="sentiment-confidence"></span></div>
+            <div class="sentiment-bar-container" aria-hidden="false">
+                <div class="sentiment-bar">
+                    <div class="sentiment-segment positive" data-role="positive" aria-label="positive"></div>
+                    <div class="sentiment-segment neutral" data-role="neutral" aria-label="neutral"></div>
+                    <div class="sentiment-segment negative" data-role="negative" aria-label="negative"></div>
+                    <div class="sentiment-segment unknown" data-role="unknown" aria-label="unknown"></div>
+                </div>
+            </div>
+            <div class="sentiment-counts">
+                <span class="sentiment-count positive-count">Positive: <strong>0</strong></span>
+                <span class="sentiment-count neutral-count">Neutral/Unknown: <strong>0</strong></span>
+                <span class="sentiment-count negative-count">Negative: <strong>0</strong></span>
+                <span class="sentiment-count relevant-count">Relevant: <strong>0</strong></span>
+            </div>
+        </div>
+    </template>
+    <!-- Search Dialog -->
+    <dialog id="search-dialog">
+        <div id="search-dialog-container">
+            <label for="search-input" id="search-input-label">Search Feed</label>
+            <input id="search-input" name="search" type="text">
+            <div id="search-btn-container">
+                <button id="cancel-search-btn" class="search-dlg-btn">Cancel</button>
+                <button id="do-search-btn" class="search-dlg-btn">Search</button>
+            </div>
+        </div>
+    </dialog>
+    <dialog id="debug-dialog">
+        <button id="close-debug-dialog">
+            Close
+        </button>
+        <p id="debug-message">
+
+        </p>
+    </dialog>
+    <canvas id="renderCanvas" class="hidden"></canvas>
+</div>
+
+</body>
+<script src="https://unpkg.com/dexie/dist/dexie.js"></script>
+<script src="/static/nebulink/nebulink.js" type="module"></script>
+</html>

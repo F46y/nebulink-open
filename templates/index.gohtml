@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GalacticApps - Home</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .grid-item {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .grid-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .grid-item h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+
+        .grid-item p {
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+
+<body>
+{{$domain := .domain}}
+
+
+
+<h1>Welcome to GalacticApps</h1>
+<div class="grid-container">
+    <a href="https://nebulink.{{$domain}}/" class="grid-item">
+        <h3>Nebulink</h3>
+        <p>A Fediverse client</p>
+    </a>
+</div>
+</body>
+</html>

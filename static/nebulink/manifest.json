@@ -1,0 +1,84 @@
+{
+  "name": "NebuLink by GalacticApps Studio",
+  "short_name": "NebuLink",
+  "description": "A fast, installable NebuLink client for the Fediverse by GalacticApps.",
+  "dir": "ltr",
+  "lang": "en-US",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0b1221",
+  "theme_color": "#0b1221",
+  "icons": [
+    {
+      "src": "/static/nebulink/assets/logo192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/nebulink/assets/logo192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/static/nebulink/assets/logo512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/static/nebulink/assets/desktop.png",
+      "sizes": "1343x768",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Home screen showing main navigation and featured content"
+    },
+    {
+      "src": "/static/nebulink/assets/phone2.png",
+      "sizes": "1208x1451",
+      "type": "image/png",
+      "label": "Screen showing featured content"
+    },
+    {
+      "src": "/static/nebulink/assets/phone3.png",
+      "sizes": "443x1136",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Home screen on folding device showing main navigation and featured content"
+    },
+    {
+      "src": "/static/nebulink/assets/phone1.png",
+      "sizes": "443x1136",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Home screen showing main navigation"
+    }
+  ],
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "shortcuts": [
+    {
+      "name": "Popular",
+      "short_name": "Popular",
+      "description": "View the most popular posts in the Fediverse.",
+      "url": "/popular",
+      "icons": [
+        {
+          "src": "/static/nebulink/assets/logo192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "categories": [
+    "social",
+    "productivity",
+    "utilities"
+  ]
+}
