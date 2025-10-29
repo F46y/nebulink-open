@@ -27,6 +27,8 @@ const features = {
 let currentMode = {
     type: "home", modifier: null,
 };
+let ignoreCloseListener = false;
+let navigationStack = [];
 let currentStatuses = [];
 let offset = 0;
 let commentsQueue = [];
@@ -171,7 +173,6 @@ async function getFeatureAvailability(browser) {
             document.getElementById("ai-models").options[1].disabled = true;
             if (features.language === false) {
                 document.getElementById("ai-models").remove();
-                document.getElementById("get-ai").remove();
             }
         }
 
@@ -205,13 +206,11 @@ async function getFeatureAvailability(browser) {
                 case "available":
                     break;
                 case "downloadable":
-                    document.getElementById("get-ai").classList.remove("hidden");
                     break;
             }
         }
 
         if (features.device === "watch") {
-            document.getElementById("get-ai").classList.add("hidden");
             document.getElementById("ai-models").remove();
             document.getElementById("ai-toggle").checked = false;
             document.getElementById("ai-toggle").remove();
@@ -595,6 +594,10 @@ const addToggleListener = (sectionId) => {
     document.getElementById(sectionId).addEventListener("toggle", (e) => {
         setFeedContainerPointerEvents(e.newState);
         if (e.newState !== "open") {
+            if (ignoreCloseListener) {
+                ignoreCloseListener = false;
+                return;
+            }
             history.back();
         }
     });
@@ -604,8 +607,6 @@ const addFooterClickListener = (footerId, sectionId, historyState, historyUrl) =
     document.getElementById(footerId)?.addEventListener("click", () => {
         hapticClick();
         openPopover(sectionId)
-        // document.getElementById(sectionId).togglePopover();
-        //addToHistory(historyState, historyUrl);
     });
 };
 
@@ -1467,8 +1468,6 @@ async function renderStatuses(statuses) {
             currentTootId = e.currentTarget.id;
             await renderStatus(translateButton, actualStatus, content, othersLiked, likeButton);
             // actualStatus.scrollIntoViewIfNeeded();
-
-            //addToHistory({showToot: true, id: actualStatus.id}, "#toot-open");
         });
 
         container.appendChild(node);
@@ -1481,26 +1480,22 @@ function openPopover(id) {
     const popover = document.getElementById(id);
     if (popover && typeof popover.showPopover === "function") {
         popover.showPopover();
+        navigationStack.push({type: "popover", id});
         history.pushState({popover: id}, "", "");
     }
 }
 
 window.addEventListener("popstate", () => {
-    const popovers = [
-        "nav-followers-section",
-        "nav-accounts-section",
-        "nav-hashtags-section"
-        // Add other popover IDs here
-    ];
-    popovers.forEach(id => {
-        const pop = document.getElementById(id);
-        const open = pop.matches(':popover-open');
-        if (pop && typeof pop.togglePopover === "function" && open) {
-            pop.togglePopover();
-            history.pushState({}, "", "");
+    if (navigationStack.length === 0) return;
+    const last = navigationStack.pop();
+    console.log(last)
+    if (last.type === "popover") {
+        const popover = document.getElementById(last.id);
+        if (popover && typeof popover.togglePopover === "function" && popover.matches(":popover-open")) {
+            ignoreCloseListener = true;
+            popover.togglePopover();
         }
-    });
-    if (document.getElementById("toot-section").innerHTML !== "") {
+    } else if (last.type === "toot") {
         closeToot(false);
     }
 });
@@ -1549,6 +1544,7 @@ async function translateIfAvailable(sourceLng, rawText) {
 
 async function renderStatus(listTranslateBtn, listStatusEl, listContentEl, othersLiked, listLikeBtn) {
     const id = currentTootId;
+    navigationStack.push({type: "toot", id});
     history.pushState({tootid: currentTootId}, "", "");
     document.getElementById("toot-section").innerHTML = "";
     const s = currentStatuses.filter((status) => status.id === id)[0];
